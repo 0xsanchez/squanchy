@@ -1,0 +1,460 @@
+openapi: 3.0.0
+info:
+  title: Reference for squanch!
+  summary: The perfect tool to use just to try an **idea** out before you handle authorization in a more scalable manner!
+  description:
+    Single executable rest authentication api that doesn't fail. <br>
+    Squanch or "to squanch" is an hardly definable term, but trust me, you know it when you see it. <br>
+    Fuck the <b>Galactic Fededation</b>. <br>
+    Download Squanchy now! ONLINE! FOR NO MONEY! <br>
+    https://github.com/0xsanchez/squanchy <br>
+  license: 
+    name: MIT
+    url: https://opensource.org/license/MIT
+servers:
+  - url: http://localhost:6900/api
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Account
+    description: Account management endpoints
+  - name: Utilities
+    description: Utility endpoints
+paths:
+  /register:
+    post:
+      tags: [Authentication]
+      summary: Register a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPayload'
+      responses:
+        '201':
+          description: Account created successfully
+        '400':
+          description: Invalid request payload
+        '409':
+          description: Email already exists
+        '500':
+          description: Internal server error
+  /register/resend:
+    get:
+      tags: [Authentication]
+      summary: Resend verification email (SMTP only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterResendPayload'
+      responses:
+        '200':
+          description: Verification email resent
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Account not found
+        '409':
+          description: Account already verified
+        '500':
+          description: Internal server error
+
+  /register/confirm:
+    post:
+      tags: [Authentication]
+      summary: Confirm email verification (SMTP only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterConfirmPayload'
+      responses:
+        '200':
+          description: Account verified successfully
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid verification code
+        '404':
+          description: Account not found
+        '409':
+          description: Account already verified
+        '500':
+          description: Internal server error
+
+  /login:
+    post:
+      tags: [Authentication]
+      summary: Login to account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginPayload'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid credentials
+        '403':
+          description: Account locked
+        '429':
+          description: Too many failed attempts
+        '500':
+          description: Internal server error
+
+  /logout:
+    post:
+      tags: [Authentication]
+      summary: Logout from account
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+        '500':
+          description: Internal server error
+
+  /recovery:
+    post:
+      tags: [Authentication]
+      summary: Request account recovery (SMTP only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryPayload'
+      responses:
+        '200':
+          description: Recovery code sent
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Email not found
+        '500':
+          description: Internal server error
+
+  /recovery/confirm:
+    post:
+      tags: [Authentication]
+      summary: Confirm account recovery (SMTP only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryConfirmPayload'
+      responses:
+        '200':
+          description: Account recovered
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid recovery code
+        '500':
+          description: Internal server error
+
+  /recovery/totp:
+    post:
+      tags: [Authentication]
+      summary: Recover 2FA (TOTP only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryTOTPPayload'
+      responses:
+        '200':
+          description: 2FA disabled
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid backup code
+        '500':
+          description: Internal server error
+
+  /modify/email:
+    put:
+      tags: [Account]
+      summary: Change account email
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmailPayload'
+      responses:
+        '200':
+          description: Email updated
+        '400':
+          description: Invalid request payload
+        '409':
+          description: Email already exists
+        '500':
+          description: Internal server error
+
+  /modify/password:
+    put:
+      tags: [Account]
+      summary: Change account password
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordPayload'
+      responses:
+        '200':
+          description: Password updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Wrong password
+        '422':
+          description: New password same as old
+        '500':
+          description: Internal server error
+
+  /modify/2fa:
+    put:
+      tags: [Account]
+      summary: Toggle 2FA status
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 2FA status changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secret:
+                    type: string
+                    description: TOTP secret (when enabling)
+                  QR:
+                    type: string
+                    description: Base64 encoded QR code (when enabling)
+        '500':
+          description: Internal server error
+
+  /modify/2fa/confirm:
+    put:
+      tags: [Account]
+      summary: Confirm 2FA change (TOTP only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Change2FAConfirmPayload'
+      responses:
+        '200':
+          description: 2FA status changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  backup:
+                    type: array
+                    items:
+                      type: string
+                    description: Backup codes (when enabling)
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Invalid TOTP code
+        '415':
+          description: 2FA already enabled
+        '500':
+          description: Internal server error
+
+  /delete:
+    delete:
+      tags: [Account]
+      summary: Delete account
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountPayload'
+      responses:
+        '200':
+          description: Account deleted
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Wrong password
+        '500':
+          description: Internal server error
+
+  /health:
+    get:
+      tags: [Utilities]
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+        '503':
+          description: Service unavailable
+
+  /openapi:
+    get:
+      tags: [Utilities]
+      summary: OpenAPI documentation
+      responses:
+        '200':
+          description: HTML documentation page
+
+components:
+  schemas:
+    RegisterPayload:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+
+    RegisterResendPayload:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    RegisterConfirmPayload:
+      type: object
+      required: [email, code]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          pattern: "^\\d{6}$"
+
+    LoginPayload:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+        totp:
+          type: string
+          pattern: "^\\d{6}$"
+
+    RecoveryPayload:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    RecoveryConfirmPayload:
+      type: object
+      required: [email, code, new]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          pattern: "^\\d{6}$"
+        new:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+
+    RecoveryTOTPPayload:
+      type: object
+      required: [email, code]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          pattern: "^[A-Z0-9]{8}$"
+
+    ChangeEmailPayload:
+      type: object
+      required: [new]
+      properties:
+        new:
+          type: string
+          format: email
+
+    ChangePasswordPayload:
+      type: object
+      required: [password, new]
+      properties:
+        password:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+        new:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+
+    Change2FAConfirmPayload:
+      type: object
+      required: [totp]
+      properties:
+        totp:
+          type: string
+          pattern: "^\\d{6}$"
+
+    DeleteAccountPayload:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+          minLength: 8
+          pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

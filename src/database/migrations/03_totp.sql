@@ -1,0 +1,21 @@
+-- +goose Up
+CREATE TABLE totp ( -- One x account
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `account` INTEGER NOT NULL UNIQUE,
+    `secret` TEXT NOT NULL,
+	`updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account) REFERENCES account(id) ON DELETE CASCADE
+);
+
+CREATE TABLE totp_backup ( -- Twelve x account
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `account` INTEGER NOT NULL,
+    `code` TEXT NOT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account) REFERENCES account(id) ON DELETE CASCADE
+);
+
+-- +goose Down
+DROP TABLE totp;
+DROP TABLE totp_backup;

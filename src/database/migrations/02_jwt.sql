@@ -1,0 +1,12 @@
+-- +goose Up
+CREATE TABLE jwt (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `token` TEXT NOT NULL,
+    `expires` TIMESTAMP NOT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `account` INTEGER NOT NULL,
+    FOREIGN KEY (account) REFERENCES account(id) ON DELETE CASCADE
+);
+
+-- +goose Down
+DROP TABLE jwt;
