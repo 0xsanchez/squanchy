@@ -18,7 +18,7 @@ func Connection(path, mode string) (*sql.DB, error) {
 	// Checking for existance
 	if _, err := os.Stat(path); err != nil {
 		// Creating the database here if the path wasn't specified
-		if path == "" {
+		if path == "" || path == "./squanchy.db" {
 			fmt.Print("Database file not specified(-d/--database)\nPress <Enter> to create one here: ")
 			input := ""
 			fmt.Scanln(&input)

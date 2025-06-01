@@ -5,13 +5,13 @@ The perfect tool to use just to "try an **idea** out" before handling authentica
 
 ## Features
 
-<img align="right" width="171" src="./squanchy.png">
+<img align="right" width="215" src="./squanchy.png">
 
 * It will always spin up a **local** authentication API, no matter what!
 * Extremely configurable with flags and environment variables.
-* Reliable using persistent and migration backward compatible sqlite3 databases.
+* Reliable using persistent and backward compatible migrations on sqlite3.
 * As performant as the chi router allows to handle requests.
-* Structured JSON responses and beautiful logging.
+* Structured JSON responses and beautiful simple logging.
 * Documented and understandable which truly isn't a given...
 * Security features and extensively **audited** for SQL injections, BOLA and more!
 
@@ -35,9 +35,8 @@ Usage: squanchy [--port] [--prefix] [--rate-limit] [--extra-rate-limit] [--peppe
 Options:
   --port, -p             specifies the port to bind to [default: 6900, env: PORT]
   --prefix               speicifes a prefix [default: /api, env: PREFIX]
-  --rate-limit, -r       specifies the rate limit(1 hour window) [default: 60, env: RATE_LIMIT]
-  --extra-rate-limit, -e
-                         specifies the extra rate limit for sensitive endpoints(1 hour window) [default: 10, env: EXTRA_RATE_LIMIT]
+  --soft-rate-limit, -r  specifies the soft rate limit(1 hour window) [default: 60, env: RATE_LIMIT]
+  --hard-rate-limit, -e  specifies the hard rate limit for sensitive endpoints(1 hour window) [default: 10, env: EXTRA_RATE_LIMIT]
   --pepper               specifies a password pepper [env: PEPPER]
   --bcrypt-cost          specifies the bcrypt cost [default: 10, env: COST]
   --lock-time, -l        specifies the lock time after too many failed attempts in hours [default: 6, env: LOCK_TIME]
@@ -75,13 +74,10 @@ you@computer$ go install github.com/0xsanchez/squanchy@latest
 
 ### Compile from source
 ```
-sudo make install || doas make install
-```
-
-## Uninstall
-```
-sudo make uninstall || doas make uninstall
+you@computer$ CGO_ENABLED=0 go build -trimpath -ldflags='-s -w -extldflags="-static"' ./cmd/squanchy/
 ```
 
 ## Contributions
-As long as you follow the vision every PRs is welcome and thanks in advance!
+Now if you wanna add a great feature, just create an issue to ask me about it before working on it just because it's not assured that I will add it once presented as a PR!
+
+You can check out [TODO](./TODO.md) and these will definitely get accepted after review.

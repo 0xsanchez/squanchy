@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/0xsanchez/squanchy/src/types"
-
+	"github.com/0xsanchez/squanchy/cmd/squanchy/types"
 	_ "modernc.org/sqlite"
 )
 

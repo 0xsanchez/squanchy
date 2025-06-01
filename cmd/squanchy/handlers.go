@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/0xsanchez/squanchy/src/store"
-	"github.com/0xsanchez/squanchy/src/types"
-	"github.com/0xsanchez/squanchy/src/utilities"
+	"github.com/0xsanchez/squanchy/cmd/squanchy/store"
+	"github.com/0xsanchez/squanchy/cmd/squanchy/types"
+	"github.com/0xsanchez/squanchy/cmd/squanchy/utilities"
 	"github.com/MarceloPetrucio/go-scalar-api-reference"
 )
 

@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/cmd/squanchy"
     schedule:
       interval: "daily"
     lables:

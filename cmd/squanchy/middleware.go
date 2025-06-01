@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/0xsanchez/squanchy/src/store"
-	"github.com/0xsanchez/squanchy/src/utilities"
+	"github.com/0xsanchez/squanchy/cmd/squanchy/store"
+	"github.com/0xsanchez/squanchy/cmd/squanchy/utilities"
 )
 
 // Adds security headers
