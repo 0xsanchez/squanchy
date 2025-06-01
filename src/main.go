@@ -26,8 +26,8 @@ import (
 var args struct {
 	Port           int    `arg:"-p,--port,env:PORT" default:"6900" placeholder:"" help:"specifies the port to bind to"`
 	Prefix         string `arg:"--prefix,env:PREFIX" default:"/api" placeholder:"" help:"speicifes a prefix"`
-	RateLimit      int    `arg:"-r,--rate-limit,env:RATE_LIMIT" default:"60" placeholder:"" help:"specifies the rate limit(1 hour window)"`
-	ExtraRateLimit int    `arg:"-e,--extra-rate-limit,env:EXTRA_RATE_LIMIT" default:"10" placeholder:"" help:"specifies the extra rate limit for sensitive endpoints(1 hour window)"`
+	RateLimit      int    `arg:"-r,--soft-rate-limit,env:RATE_LIMIT" default:"60" placeholder:"" help:"specifies the rate limit(1 hour window)"`
+	ExtraRateLimit int    `arg:"-e,--hard-rate-limit,env:EXTRA_RATE_LIMIT" default:"10" placeholder:"" help:"specifies the extra rate limit for sensitive endpoints(1 hour window)"`
 	Pepper         string `arg:"--pepper,env:PEPPER" default:"" placeholder:"" help:"specifies a password pepper"`
 	BcryptCost     int    `arg:"--bcrypt-cost,env:COST" default:"10" placeholder:"" help:"specifies the bcrypt cost"`
 	LockTime       int    `arg:"-l,--lock-time,env:LOCK_TIME" default:"6" placeholder:"" help:"specifies the lock time after too many failed attempts in hours"`

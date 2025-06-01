@@ -35,9 +35,8 @@ Usage: squanchy [--port] [--prefix] [--rate-limit] [--extra-rate-limit] [--peppe
 Options:
   --port, -p             specifies the port to bind to [default: 6900, env: PORT]
   --prefix               speicifes a prefix [default: /api, env: PREFIX]
-  --rate-limit, -r       specifies the rate limit(1 hour window) [default: 60, env: RATE_LIMIT]
-  --extra-rate-limit, -e
-                         specifies the extra rate limit for sensitive endpoints(1 hour window) [default: 10, env: EXTRA_RATE_LIMIT]
+  --soft-rate-limit, -r  specifies the soft rate limit(1 hour window) [default: 60, env: RATE_LIMIT]
+  --hard-rate-limit, -e  specifies the hard rate limit for sensitive endpoints(1 hour window) [default: 10, env: EXTRA_RATE_LIMIT]
   --pepper               specifies a password pepper [env: PEPPER]
   --bcrypt-cost          specifies the bcrypt cost [default: 10, env: COST]
   --lock-time, -l        specifies the lock time after too many failed attempts in hours [default: 6, env: LOCK_TIME]
